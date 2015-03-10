@@ -1,7 +1,7 @@
 ---
 title: "Time series graphs and covariance matrix shrinkage"
 author: "B. W. Lewis"
-date: "12/25/2015"
+date: "3/10/2015"
 output:
   html_document:
     theme: default
