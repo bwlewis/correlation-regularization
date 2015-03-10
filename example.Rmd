@@ -145,10 +145,9 @@ makes $S$ a better numerically conditioned matrix. This shift has the effect
 of reducing the influence of noise on the computed precision matrix values
 (related to the inverse of the sample covariance matrix).
 
-The famous Ledoit-Wolf procedure follows along these lines with some added
-finesse to shrink covariance matrices.
-See http://www.ledoit.net/honey.pdf for an enjoyable paper that covers
-full details on the procedure.
+The Ledoit-Wolf process defines a more sophisticated regularization method with added
+finesse that shrinks covariance matrices.
+See http://www.ledoit.net/honey.pdf for an enjoyable paper.
 
 
 ## A brief note on the user-supplied parameter
