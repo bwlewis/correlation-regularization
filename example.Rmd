@@ -12,7 +12,7 @@ using stock market data. The example performs five steps:
 
 1. Download daily adjusted price data for about 50 stocks
    and convert prices to log(returns).
-2. Compute a shrunk precision matrix using the Ledoit-Wolf method and
+2. Compute a shrunk precision matrix using the celebrated Ledoit-Wolf method and
    threshold its values to retain only highly conditionally-correlated returns.
 3. Plot the result as an adjacency graph.
 
@@ -117,35 +117,30 @@ This does a pretty good job of finding connections between related stocks!
 
 ## A brief discussion of covariance matrix shrinkage
 
-A sample covariance matrix (computed from observed data)
-may not always yield a good estimate of an
-underlying population covariance structure for a variety of reasons
-including noisy measurements, missing data, incomplete data, and others.
-Somewhat independently of this problem, sample covariance matrices may also
-exhibit poor numerical conditioning, either on account of noisy or imperfect
-data or otherwise.
+A sample covariance matrix (computed from observed data) may not always yield a
+good estimate of an underlying population covariance structure for a variety of
+reasons including noisy measurements, missing data, incomplete data, and
+others.  The sample covariance matrices may also exhibit poor numerical
+conditioning, either on account of noisy or imperfect data or otherwise.
 
 Regularization, a.k.a shrinkage, is a broad topic that has been applied
 in this example to help address these issues. The basic idea replaces the
 sample covariance matrix with a better numerically conditioned one. This
 has the effect of "shrinking" the covariance matrix towards a multiple of the
-identity matrix.
+identity matrix.  The gist of the shrinkage approach is described next.
 
-The gist of the shrinkage approach is described next.
-
-Recall that if the columns of a data matrix $A$ all have mean zero, then the
-sample covariance matrix $S = A^T A$. Note that in particular, $S$ is a symmetric
-matrix. We also can deduce that $S$ has no negative eigenvalues
-(it's positive semi-definite at least). That means that simply adding a positive
-multiple of the identity matrix, $S + \lambda I$, has the effect of shifting
-the eigenvalues of $S$ by $\lambda$--away from zero, which makes $S$ a better
-numerically conditioned matrix.
+Recall that if the columns of a data matrix $X$ all have mean zero, then the
+sample covariance matrix $S$ is a multiple of $X^T X$. Note that in particular
+$S$ is a symmetric matrix. We also can deduce that $S$ has no negative
+eigenvalues (it's positive semi-definite at least). That means that simply
+adding a positive multiple of the identity matrix, $S + \lambda I$, has the
+effect of shifting the eigenvalues of $S$ by $\lambda$--away from zero, which
+makes $S$ a better numerically conditioned matrix. This shift has the effect
+of reducing the influence of noise on the computed precision matrix values
+(related to the inverse of the sample covariance matrix).
 
 The famous Ledoit-Wolf procedure follows along these lines with some added
-finesse to shrink covariance matrices. The result is that the effect of
-noise on the computed conditional correlations in the precision matrix are
-reduced.
-(The precision matrix is the inverse of a scaled version of the sample covariance matrix.)
+finesse to shrink covariance matrices.
 See http://www.ledoit.net/honey.pdf for an enjoyable paper that covers
 full details on the procedure.
 
