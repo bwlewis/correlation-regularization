@@ -7,7 +7,7 @@ output:
     theme: default
 ---
 
-This document presents a fun example of graph-based time series clustering
+This document presents a fun example of graph-based time series graph clustering
 using stock market data. The example performs five steps:
 
 1. Download daily adjusted price data for about 50 stocks
@@ -15,6 +15,10 @@ using stock market data. The example performs five steps:
 2. Compute a shrunk precision matrix using the celebrated Ledoit-Wolf method and
    threshold its values to retain only highly conditionally-correlated returns.
 3. Plot the result as an adjacency graph.
+
+We don't form explicit clusters in the graph but simply visualize its output.
+An example next step might be to run community or clique detection algorithms
+on this, for example from the igraph package.
 
 See below for more detail. This example was largely inspired by this excellent
 Python Scikit-learn example:
