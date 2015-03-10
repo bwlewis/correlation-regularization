@@ -1,5 +1,5 @@
 ---
-title: "Time series clustering and covariance matrix shrinkage"
+title: "Time series graphs and covariance matrix shrinkage"
 author: "B. W. Lewis"
 date: "12/25/2015"
 output:
