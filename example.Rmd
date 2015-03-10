@@ -8,7 +8,7 @@ output:
 ---
 
 This document presents a fun example of graph-based time series graph clustering
-using stock market data. The example performs five steps:
+using stock market data. The example consists of three steps:
 
 1. Download daily adjusted price data for about 50 stocks
    and convert prices to log(returns).
