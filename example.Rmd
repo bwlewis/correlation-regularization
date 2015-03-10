@@ -113,6 +113,8 @@ simpleNetwork(links, fontSize=16, textColour="#000011",
               charge=-250, nodeClickColour=NULL)
 ```
 This does a pretty good job of finding connections between related stocks!
+Note in particular the MTU, TM, CAJ, HMC, SNE cluster; although those stocks
+span many sectors, they are all Japanese corporations.
 
 
 ## A brief discussion of covariance matrix shrinkage
