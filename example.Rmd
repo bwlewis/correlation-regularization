@@ -7,8 +7,8 @@ output:
     theme: default
 ---
 
-This document presents a fun example of graph-based time series graph clustering
-using stock market data. The example consists of three steps:
+This document presents a fun example of graph-based clustering
+using stock market time series data. The example consists of three steps:
 
 1. Download daily adjusted price data for about 50 stocks
    and convert prices to log(returns).
@@ -28,8 +28,8 @@ http://scikit-learn.org/stable/auto_examples/applications/plot_stock_market.html
 
 ## 1. Download
 
-We use the quantmod package to obtain daily adjusted stock price data for the
-following 58 stocks from 2007 to the present. If you don't have the quantmod
+We use the quantmod package to obtain daily adjusted stock price data for 58
+stocks from 2007 to the present. If you don't have the quantmod
 package installed, you'll need to install it to perform this step.
 
 In case you're wondering, Walgreen's recently replaced their 87 year old ticker
@@ -50,7 +50,7 @@ sectors           <- c("consumer", "energy", "finance", "industrial", "pharma", 
 sector_assignment <- factor(sectors[c(6,1,3,3,3,6,4,1,1,2,6,1,1,2,4,1,4,4,3,5,1,1,6,6,3,1,1,1,4,1,                                                                1,1,4,6,3,4,4,5,1,5,1,4,4,6,6,5,1,2,1,6,1,2,1,3,1,2,6,6)])
 ```
 Download data for these stocks using the quantmod package and convert the
-daily adjust prices to log returns.
+daily adjusted prices to log returns.
 ```{r eval=FALSE,echo=TRUE}
 library(quantmod)
 p       <- lapply(symbols, function(n) {print(n);getSymbols(n, auto.assign=FALSE)[,4]})
@@ -67,15 +67,17 @@ close(con)
 
 Compute a shrunk, thresholded sample correlation matrix and its inverse,
 referred to as a precision matrix.  The precision matrix is an estimate of
-conditional correlation between returns. We use the Ledoit-Wolf shrinkage
+conditional correlation between stocks. We use the Ledoit-Wolf shrinkage
 method provided by R's corpcor package. If you don't have the corpcor package,
 you'll need to install that from CRAN.
 
 See below for very brief comments on shrinking correlation matrices.
 
 Two user-supplied parameters are used in this step, a shrinkage parameter
-and a threshold, both set at 0.9. You should be suspicious of this! How
-are these values chosen? See below for more comments on this.
+and a threshold. You should be suspicious of this! How
+are these values chosen? See below for more comments on this and an
+example shiny app that visualizes the effect of the parameters on the
+graph.
 
 ```{r eval=TRUE,echo=TRUE}
 library("corpcor")
@@ -150,7 +152,7 @@ finesse that shrinks covariance matrices.
 See http://www.ledoit.net/honey.pdf for an enjoyable paper.
 
 
-## A brief note on the user-supplied parameter
+## A brief note on the user-supplied parameters
 
 I used two user-supplied parameters above, one for the shrinkage
 amount and another for thresholding. The visualization and graph clusters that
