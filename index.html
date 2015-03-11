@@ -70,7 +70,7 @@ img {
 </div>
 
 
-<p>This document presents a fun example of graph-based time series graph clustering using stock market data. The example consists of three steps:</p>
+<p>This document presents a fun example of graph-based clustering using stock market time series data. The example consists of three steps:</p>
 <ol style="list-style-type: decimal">
 <li>Download daily adjusted price data for about 50 stocks and convert prices to log(returns).</li>
 <li>Compute a shrunk precision matrix using the celebrated Ledoit-Wolf method and threshold its values to retain only highly conditionally-correlated returns.</li>
@@ -81,7 +81,7 @@ img {
 <p><a href="http://scikit-learn.org/stable/auto_examples/applications/plot_stock_market.html">http://scikit-learn.org/stable/auto_examples/applications/plot_stock_market.html</a></p>
 <div id="download" class="section level2">
 <h2>1. Download</h2>
-<p>We use the quantmod package to obtain daily adjusted stock price data for the following 58 stocks from 2007 to the present. If you don’t have the quantmod package installed, you’ll need to install it to perform this step.</p>
+<p>We use the quantmod package to obtain daily adjusted stock price data for 58 stocks from 2007 to the present. If you don’t have the quantmod package installed, you’ll need to install it to perform this step.</p>
 <p>In case you’re wondering, Walgreen’s recently replaced their 87 year old ticker symbol “WAG” with “WBA.”</p>
 <p>In addition to the stock ticker symbols, we assign each stock to its sector in the sector_assignment vector below. That’s used in a visualization later.</p>
 <pre class="r"><code>symbols &lt;- c(&quot;AAPL&quot;, &quot;AMZN&quot;, &quot;AXP&quot;, &quot;BA&quot;, &quot;BAC&quot;, &quot;CAJ&quot;, &quot;CAT&quot;, &quot;CL&quot;, &quot;CMCSA&quot;,
@@ -93,7 +93,7 @@ img {
 
 sectors           &lt;- c(&quot;consumer&quot;, &quot;energy&quot;, &quot;finance&quot;, &quot;industrial&quot;, &quot;pharma&quot;, &quot;tech&quot;)
 sector_assignment &lt;- factor(sectors[c(6,1,3,3,3,6,4,1,1,2,6,1,1,2,4,1,4,4,3,5,1,1,6,6,3,1,1,1,4,1,                                                                1,1,4,6,3,4,4,5,1,5,1,4,4,6,6,5,1,2,1,6,1,2,1,3,1,2,6,6)])</code></pre>
-<p>Download data for these stocks using the quantmod package and convert the daily adjust prices to log returns.</p>
+<p>Download data for these stocks using the quantmod package and convert the daily adjusted prices to log returns.</p>
 <pre class="r"><code>library(quantmod)
 p       &lt;- lapply(symbols, function(n) {print(n);getSymbols(n, auto.assign=FALSE)[,4]})
 x       &lt;- Reduce(cbind, p)
@@ -101,9 +101,9 @@ returns &lt;- apply(x,2,function(z) diff(log(z)))</code></pre>
 </div>
 <div id="shrink" class="section level2">
 <h2>2. Shrink</h2>
-<p>Compute a shrunk, thresholded sample correlation matrix and its inverse, referred to as a precision matrix. The precision matrix is an estimate of conditional correlation between returns. We use the Ledoit-Wolf shrinkage method provided by R’s corpcor package. If you don’t have the corpcor package, you’ll need to install that from CRAN.</p>
+<p>Compute a shrunk, thresholded sample correlation matrix and its inverse, referred to as a precision matrix. The precision matrix is an estimate of conditional correlation between stocks. We use the Ledoit-Wolf shrinkage method provided by R’s corpcor package. If you don’t have the corpcor package, you’ll need to install that from CRAN.</p>
 <p>See below for very brief comments on shrinking correlation matrices.</p>
-<p>Two user-supplied parameters are used in this step, a shrinkage parameter and a threshold, both set at 0.9. You should be suspicious of this! How are these values chosen? See below for more comments on this.</p>
+<p>Two user-supplied parameters are used in this step, a shrinkage parameter and a threshold. You should be suspicious of this! How are these values chosen? See below for more comments on this and an example shiny app that visualizes the effect of the parameters on the graph.</p>
 <pre class="r"><code>library(&quot;corpcor&quot;)
 Sr &lt;- cor.shrink(returns,lambda=0.5)             # shrink</code></pre>
 <pre><code>## Specified shrinkage intensity lambda (correlation matrix): 0.5</code></pre>
@@ -130,8 +130,8 @@ vertex_colors &lt;- sector_palette[as.integer(sector_assignment[unique(Reduce(c,
 simpleNetwork(links, fontSize=16, textColour=&quot;#000011&quot;,
               linkColour=&quot;#bbbbbb&quot;, nodeColour=vertex_colors,
               charge=-250, nodeClickColour=NULL)</code></pre>
-<p><div id="htmlwidget-8801" style="width:720px;height:720px;" class="simpleNetwork"></div>
-<script type="application/json" data-for="htmlwidget-8801">{ "x": {
+<p><div id="htmlwidget-2438" style="width:720px;height:720px;" class="simpleNetwork"></div>
+<script type="application/json" data-for="htmlwidget-2438">{ "x": {
  "links": {
  "source": [ "AAPL", "AMZN", "AMZN", "AMZN", "AXP", "AXP", "AXP", "AXP", "AXP", "AXP", "AXP", "AXP", "BA", "BA", "BA", "BA", "BA", "BA", "BAC", "BAC", "BAC", "BAC", "BAC", "BAC", "CAJ", "CAJ", "CAJ", "CAJ", "CAJ", "CAT", "CAT", "CAT", "CAT", "CAT", "CAT", "CAT", "CAT", "CAT", "CAT", "CAT", "CAT", "CL", "CL", "CL", "CL", "CL", "CMCSA", "CMCSA", "CMCSA", "COP", "COP", "COP", "COP", "COP", "COP", "CSCO", "CSCO", "CSCO", "CSCO", "CSCO", "CSCO", "CVC", "CVC", "CVS", "CVS", "CVS", "CVS", "CVS", "CVX", "CVX", "CVX", "CVX", "CVX", "CVX", "DD", "DD", "DD", "DD", "DD", "DD", "F", "F", "F", "F", "F", "GD", "GD", "GD", "GD", "GD", "GE", "GE", "GE", "GE", "GE", "GE", "GE", "GE", "GE", "GS", "GS", "GS", "GS", "GS", "GS", "GSK", "GSK", "GSK", "GSK", "GSK", "HD", "HD", "HD", "HD", "HD", "HD", "HD", "HD", "HD", "HMC", "HMC", "HMC", "HMC", "HMC", "HPQ", "HPQ", "HPQ", "HPQ", "HPQ", "HPQ", "IBM", "IBM", "IBM", "IBM", "IBM", "JPM", "JPM", "JPM", "JPM", "JPM", "JPM", "JPM", "JPM", "JPM", "JPM", "K", "K", "K", "K", "K", "KMB", "KMB", "KMB", "KMB", "KMB", "KMB", "KMB", "KMB", "KO", "KO", "LMT", "LMT", "LMT", "LMT", "LMT", "MAR", "MAR", "MAR", "MAR", "MAR", "MAR", "MAR", "MAR", "MAR", "MAR", "MAR", "MCD", "MCD", "MCD", "MCD", "MDLZ", "MDLZ", "MDLZ", "MDLZ", "MDLZ", "MMM", "MMM", "MMM", "MMM", "MMM", "MMM", "MSFT", "MSFT", "MSFT", "MSFT", "MSFT", "MSFT", "MTU", "MTU", "MTU", "MTU", "MTU", "MTU", "MTU", "NAV", "NAV", "NAV", "NOC", "NOC", "NOC", "NOC", "NOC", "NVS", "NVS", "NVS", "NVS", "NVS", "NVS", "PEP", "PEP", "PEP", "PEP", "PEP", "PEP", "PEP", "PFE", "PFE", "PFE", "PFE", "PFE", "PFE", "PG", "PG", "PG", "PG", "PG", "PG", "PG", "PG", "PG", "PG", "R", "R", "R", "R", "R", "R", "R", "RTN", "RTN", "RTN", "RTN", "RTN", "RTN", "SAP", "SAP", "SAP", "SAP", "SAP", "SNE", "SNE", "SNE", "SNE", "SNE", "SNY", "SNY", "SNY", "SNY", "SNY", "SNY", "SNY", "TM", "TM", "TM", "TM", "TM", "TOT", "TOT", "TOT", "TOT", "TOT", "TOT", "TOT", "TOT", "TOT", "TOT", "TOT", "TWX", "TXN", "TXN", "TXN", "TXN", "TXN", "UN", "UN", "UN", "UN", "UN", "UN", "UN", "VLO", "VLO", "VLO", "VLO", "VLO", "VLO", "WBA", "WBA", "WFC", "WFC", "WFC", "WFC", "WFC", "WFC", "WFC", "WMT", "WMT", "WMT", "WMT", "WMT", "WMT", "XOM", "XOM", "XOM", "XOM", "XOM", "XOM", "XOM", "XRX", "XRX", "XRX", "XRX", "XRX", "XRX", "XRX", "YHOO", "YHOO" ],
 "target": [ "AAPL", "AMZN", "HD", "MSFT", "AXP", "BAC", "CAT", "GE", "GS", "HD", "JPM", "WFC", "BA", "GD", "LMT", "MAR", "NOC", "RTN", "AXP", "BAC", "GE", "GS", "JPM", "WFC", "CAJ", "HMC", "MTU", "SNE", "TM", "AXP", "CAT", "COP", "CVX", "DD", "MAR", "MMM", "NAV", "R", "TOT", "VLO", "XRX", "CL", "CSCO", "KMB", "PEP", "PG", "CMCSA", "CVC", "CVS", "CAT", "COP", "CVX", "TOT", "VLO", "XOM", "CL", "CSCO", "HPQ", "IBM", "MSFT", "TXN", "CMCSA", "CVC", "CMCSA", "CVS", "HD", "KMB", "WBA", "CAT", "COP", "CVX", "TOT", "VLO", "XOM", "CAT", "DD", "MAR", "MMM", "R", "TOT", "F", "HD", "MAR", "NAV", "YHOO", "BA", "GD", "LMT", "NOC", "RTN", "AXP", "BAC", "GE", "JPM", "MAR", "MMM", "R", "WFC", "XRX", "AXP", "BAC", "GS", "JPM", "MTU", "WFC", "GSK", "NVS", "PFE", "SNY", "UN", "AMZN", "AXP", "CVS", "F", "HD", "JPM", "MAR", "MCD", "WMT", "CAJ", "HMC", "MTU", "SNE", "TM", "CSCO", "HPQ", "IBM", "MSFT", "TXN", "XRX", "CSCO", "HPQ", "IBM", "MSFT", "SAP", "AXP", "BAC", "GE", "GS", "HD", "JPM", "MAR", "MTU", "R", "WFC", "K", "KMB", "MDLZ", "PEP", "PG", "CL", "CVS", "K", "KMB", "MDLZ", "PEP", "PG", "WMT", "KO", "PEP", "BA", "GD", "LMT", "NOC", "RTN", "BA", "CAT", "DD", "F", "GE", "HD", "JPM", "MAR", "R", "WFC", "XRX", "HD", "MCD", "PG", "WMT", "K", "KMB", "MDLZ", "PEP", "PG", "CAT", "DD", "GE", "MMM", "R", "RTN", "AMZN", "CSCO", "HPQ", "IBM", "MSFT", "TXN", "CAJ", "GS", "HMC", "JPM", "MTU", "SNE", "TM", "CAT", "F", "NAV", "BA", "GD", "LMT", "NOC", "RTN", "GSK", "NVS", "PFE", "SNY", "TOT", "UN", "CL", "K", "KMB", "KO", "MDLZ", "PEP", "PG", "GSK", "NVS", "PFE", "SNY", "WMT", "XOM", "CL", "K", "KMB", "MCD", "MDLZ", "PEP", "PG", "UN", "WMT", "XOM", "CAT", "DD", "GE", "MAR", "MMM", "R", "XRX", "BA", "GD", "LMT", "MMM", "NOC", "RTN", "IBM", "SAP", "SNY", "TOT", "UN", "CAJ", "HMC", "MTU", "SNE", "TM", "GSK", "NVS", "PFE", "SAP", "SNY", "TOT", "UN", "CAJ", "HMC", "MTU", "SNE", "TM", "CAT", "COP", "CVX", "DD", "NVS", "SAP", "SNY", "TOT", "UN", "VLO", "XOM", "TWX", "CSCO", "HPQ", "MSFT", "TXN", "XRX", "GSK", "NVS", "PG", "SAP", "SNY", "TOT", "UN", "CAT", "COP", "CVX", "TOT", "VLO", "XOM", "CVS", "WBA", "AXP", "BAC", "GE", "GS", "JPM", "MAR", "WFC", "HD", "KMB", "MCD", "PFE", "PG", "WMT", "COP", "CVX", "PFE", "PG", "TOT", "VLO", "XOM", "CAT", "GE", "HPQ", "MAR", "R", "TXN", "XRX", "F", "YHOO" ] 
@@ -155,8 +155,8 @@ simpleNetwork(links, fontSize=16, textColour=&quot;#000011&quot;,
 <p>Recall that if the columns of a data matrix <span class="math">\(X\)</span> all have mean zero, then the sample covariance matrix <span class="math">\(S\)</span> is a multiple of <span class="math">\(X^T X\)</span>. Note that in particular <span class="math">\(S\)</span> is a symmetric matrix. We also can deduce that <span class="math">\(S\)</span> has no negative eigenvalues (it’s positive semi-definite at least). That means that simply adding a positive multiple of the identity matrix, <span class="math">\(S + \lambda I\)</span>, has the effect of shifting the eigenvalues of <span class="math">\(S\)</span> by <span class="math">\(\lambda\)</span>–away from zero, which makes <span class="math">\(S\)</span> a better numerically conditioned matrix. This shift has the effect of reducing the influence of noise on the computed precision matrix values (related to the inverse of the sample covariance matrix).</p>
 <p>The Ledoit-Wolf process defines a more sophisticated regularization method with added finesse that shrinks covariance matrices. See <a href="http://www.ledoit.net/honey.pdf">http://www.ledoit.net/honey.pdf</a> for an enjoyable paper.</p>
 </div>
-<div id="a-brief-note-on-the-user-supplied-parameter" class="section level2">
-<h2>A brief note on the user-supplied parameter</h2>
+<div id="a-brief-note-on-the-user-supplied-parameters" class="section level2">
+<h2>A brief note on the user-supplied parameters</h2>
 <p>I used two user-supplied parameters above, one for the shrinkage amount and another for thresholding. The visualization and graph clusters that fall out of this are sensitive to both of these parameters. Too little shrinkage or too little thresholding and everything globs together. Too much and we separate all the stocks into isolated islands.</p>
 <p>I’m always suspicious of parameters. In this case, I did not select them using an analytic process, but rather I chose values that made the plot look good!</p>
 <p>Note that if I more carefully quantify the phrase “look good” then I could cook up an analytic process for parameter selection. For example, “look good” might mean to break the graph up into a small number of connected components with large membership.</p>
