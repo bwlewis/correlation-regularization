@@ -139,8 +139,8 @@ identity matrix.  The gist of the shrinkage approach is described next.
 
 Recall that if the columns of a data matrix $X$ all have mean zero, then the
 sample covariance matrix $S$ is a multiple of $X^T X$. Note that in particular
-$S$ is a symmetric matrix. We also can deduce that $S$ has no negative
-eigenvalues (it's positive semi-definite at least). That means that simply
+$S$ is a symmetric matrix. We also can deduce that $S$ doesn't have any negative
+eigenvalues. That means that simply
 adding a positive multiple of the identity matrix, $S + \lambda I$, has the
 effect of shifting the eigenvalues of $S$ by $\lambda$--away from zero, which
 makes $S$ a better numerically conditioned matrix. This shift has the effect
