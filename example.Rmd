@@ -130,6 +130,8 @@ good estimate of an underlying population covariance structure for a variety of
 reasons including noisy measurements, missing data, incomplete data, and
 others.  The sample covariance matrices may also exhibit poor numerical
 conditioning, either on account of noisy or imperfect data or otherwise.
+These errors are magnified when computing the precision matrix (the
+inverse of the covariance matrix).
 
 Regularization, a.k.a shrinkage, is a broad topic that has been applied
 in this example to help address these issues. The basic idea replaces the
