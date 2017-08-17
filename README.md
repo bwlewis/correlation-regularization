@@ -4,7 +4,7 @@
 
 See
 
-http://bwlewis.github.io/covariance-shrinkage
+https://bwlewis.github.io/covariance-shrinkage
 
 for an example regularization, network analysis, and clustering using stock
 market data.
