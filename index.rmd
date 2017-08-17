@@ -495,5 +495,5 @@ slider = crosstool(sd1, "transmitter",
 vis = graphjs(g, l, vertex.size=0.2, main=as.list(threshold), defer=TRUE, edge.alpha=0.5, deferfps=30,
         crosstalk=sd2, width="100%", height=900)
 
-browsable(div(list(HTML("<center>"), tags$h3("Connectivity threshold (adjust slider to change)"), slider, vis, relay)))
+browsable(div(list(HTML("<center>"), tags$h3("Precision matrix quantile threshold (adjust slider to change)"), slider, vis, relay)))
 ```
