@@ -303,12 +303,12 @@ P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
 
 # Put a package on it
 
-There is a carefully written R package to construct regularized precision
-matrices: the corpcor package (https://cran.r-project.org/package=corpcor) by
-Juliane Schafer, Rainer Opgen-Rhein, Verena Zuber, Miika Ahdesmaki, A. Pedro
-Duarte Silva, and Korbinian Strimmer. Their package includes the original
-Ledoit Wolf-like regularization method, as well as refinements to it and many
-other methods.
+There is a carefully written R package to construct regularized correlation and
+precision matrices: the corpcor package
+(https://cran.r-project.org/package=corpcor) by Juliane Schafer, Rainer
+Opgen-Rhein, Verena Zuber, Miika Ahdesmaki, A. Pedro Duarte Silva, and
+Korbinian Strimmer. Their package includes the original Ledoit Wolf-like
+regularization method, as well as refinements to it and many other methods.
 
 You can use the corpcor package to form a Ledoit-Wolf-like regularized
 precision matrix P, and you should try it! The result is similar to what we get
