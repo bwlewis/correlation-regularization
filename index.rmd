@@ -177,9 +177,9 @@ Eric Zivot
 or Bernhard Pfaff's lovely book "Analysis of Integrated and Cointegrated Time
 Series with R" (http://www.springer.com/us/book/9780387759661), or even
 Wikipedia (https://en.wikipedia.org/wiki/Cointegration).  I also have some
-weird technical notes on the numerics of cointegration available here
-http://illposed.net/cointegration.html.  Cointegration is a wonderful, but deep
-topic. Instead, let's try a lesser, but simpler approach.
+of my own weird technical notes on the numerics of cointegration
+(http://illposed.net/cointegration.html).  Cointegration is a wonderful, but
+deep topic. Instead, let's try a lesser, but simpler approach.
 
 We can try to address issue 2 above by controlling for confounding variables.
 One approach considers _partial correlation_ instead of correlation (see for
@@ -194,9 +194,9 @@ matrices is generally a bad idea. Even worse, we have issue 1 above that says
 that our estimated correlation coefficients contain error (noise). Even a tiny
 amount noise can be hugely amplified if we invert the correlation matrix.
 That's because, as we will soon see, the correlation matrix contains tiny
-eigenvalues and matrix inversion will effectively divide the noise by those
-tiny values.  Simply stated, dividing by a tiny number returns a big
-number--that is, matrix inversion tends to blow the noise up.
+eigenvalues and matrix inversion effectively divides the noise by those tiny
+values.  Simply stated, dividing by a tiny number returns a big number--that
+is, matrix inversion tends to blow the noise up.
 
 Think of the overall goal of this example as a model: given the input of a
 bunch of historical stock prices, produce the output of a network that
