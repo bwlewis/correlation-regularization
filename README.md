@@ -1,6 +1,6 @@
 # Learning things we already know about stocks
 
-## or, stock return series networks and sample correlation matrix shrinkage
+## or, stock return series networks and sample correlation matrix regularization
 
 See
 
