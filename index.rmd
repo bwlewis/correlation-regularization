@@ -21,10 +21,11 @@ and Wolf, "Honey, I Shrunk the Sample Covariance Matrix"
 regularization approach based on a matrix eigenvalue decomposition, but it's
 the same general idea.
 
-Rather than focus on mathematical analysis, which is well-described in detail
-in the references, this example spells out the how's and why's: how to do it
-step by step (using R), with a non-rigorous but intuitive rationale for each
-step.
+This note follows an informal, how-to format.  Rather than focus on
+mathematical analysis, which is well-detailed in the references, I try to spell
+out the how's and why's: how to do things step by step (using R) and a somewhat
+non-rigorous rationale for each step that's hopefully at least convincing and
+intuitive.
 
 For emphasis, allow me to restate the first sentence as an imperative
 objective:
@@ -32,7 +33,8 @@ objective:
 - Group stocks together in a network that highlights associations within
   and between the groups using only historical price data.
 
-That's what the rest of this example will do.
+That's what the rest of this example will do, hopefully illuminating some key
+ideas about regularization along the way.
 
 
 # Software used in the example
@@ -55,7 +57,7 @@ follows:
 library(quantmod)
 load(url("http://illposed.net/logreturns.rdata"))
 ```
-Otherwise, follow the next three sections to download the raw stock daily price
+Otherwise, follow the next two sections to download the raw stock daily price
 data and process those data into log(returns).
 
 
@@ -106,7 +108,7 @@ prices = Reduce(cbind, prices[i])
 colnames(prices) = sym[i]
 ```
 
-# Post process price data
+## Clean up and transform data
 
 Not every stock symbol may have prices available for every day. (Trading may be
 suspended for some reason, companies get acquired or go private, new companies
@@ -124,10 +126,9 @@ prices = prices[, apply(prices, 2, function(x) ! any(is.na(x)))]  # omit stocks 
 ```
 
 
-# Convert from prices to log(returns)
-
-Now that we have a universe of stocks with valid price data, convert
-those prices to log(returns) for the remaining analysis.
+Now that we have a universe of stocks with valid price data, convert those
+prices to log(returns) for the remaining analysis (where by returns I mean
+simply the ratio of prices relative to the first price).
 
 Why log(returns) instead of prices?
 
@@ -150,7 +151,7 @@ of log(returns):
 log_returns = apply(prices, 2, function(x) diff(log(x)))
 ```
 
-# Sample correlation <a name="correlation"/>
+# Sample correlation <a name="correlation"/> matrix
 
 It's easy to convert the downloaded log(returns) data into a Pearson's sample
 correlation matrix `X`:
@@ -183,11 +184,21 @@ deep topic. Instead, let's try a lesser, but simpler approach.
 
 We can try to address issue 2 above by controlling for confounding variables.
 One approach considers _partial correlation_ instead of correlation (see for
-example https://en.wikipedia.org/wiki/Partial_correlation). That approach works
-best in practice with approximately normal data--one reason for the switch to
-log(returns) instead of prices. The partial correlation coefficients between
-all stock log(returns) series are the entries of the inverse of the correlation
-matrix.
+example https://en.wikipedia.org/wiki/Partial_correlation and
+https://www.statlect.com/glossary/precision-matrix). That approach works best
+in practice with approximately normal data--one reason for the switch to
+log(returns) instead of prices. We will treat the entries of the precision
+matrix as measures of association in a network of stocks below.
+
+It's worth stating that approach basically treats the log(returns) series as a
+bunch of vectors and not so much bona fide time series, and can't handle as
+many pathologies that might occur as well as cointegration can. But as we will
+see, this simple technique is still pretty effective at finding structure in
+our data. (And indeed related methods as discussed by Ledoit and Wolf and
+elsewhere are widely used in portfolio and risk analyses in practice.)
+
+The partial correlation coefficients between all stock log(returns) series are
+the entries of the inverse of the correlation matrix.
 
 You may recall from some long ago class that, numerically speaking, inverting
 matrices is generally a bad idea. Even worse, we have issue 1 above that says
@@ -196,14 +207,16 @@ amount noise can be hugely amplified if we invert the correlation matrix.
 That's because, as we will soon see, the correlation matrix contains tiny
 eigenvalues and matrix inversion effectively divides the noise by those tiny
 values.  Simply stated, dividing by a tiny number returns a big number--that
-is, matrix inversion tends to blow the noise up.
+is, matrix inversion tends to blow the noise up. This is a fundamental issue
+(in a sense, _the_ fundamental issue) common to many inverse problems.
 
-Think of the overall goal of this example as a model: given the input of a
-bunch of historical stock prices, produce the output of a network that
-highlights associations within and between the groups of stocks.
+Think of our overall goal as a model: given the input of a bunch of historical
+stock prices, produce the output of a network that highlights associations
+within and between the groups of stocks. Stated like this, our model is a kind
+of inverse problem--one that involves finding a precision matrix.
 
 Ledoit and Wolf's sensible answer to reducing the influence of noise is
-_regularization_. Regularization replaces models with _different_, but related,
+_regularization_. Regularization replaces models with _different, but related_,
 models designed to reduce the influence of noise on their output.  LW use a
 form of regularization  related to ridge regression (a.  k. a.  Tikhonov
 regularization) with a peculiar regularization operator based on a highly
@@ -244,7 +257,7 @@ abline(v=10)
 ```
 
 The eigenvalues fall off rather quickly in our example! That means that a lot
-of the total information in the correlation matrix is contained in the first
+of the information in the correlation matrix is contained in the first
 few eigenvectors.
 
 Let's assume, perhaps unreasonably, that the errors in our estimate of the
@@ -308,14 +321,19 @@ P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
 
 There is a carefully written R package to construct regularized correlation and
 precision matrices: the corpcor package
-(https://cran.r-project.org/package=corpcor) by Juliane Schafer, Rainer
+(https://cran.r-project.org/package=corpcor, and also see
+http://strimmerlab.org/software/corpcor/) by Juliane Schafer, Rainer
 Opgen-Rhein, Verena Zuber, Miika Ahdesmaki, A. Pedro Duarte Silva, and
 Korbinian Strimmer. Their package includes the original Ledoit Wolf-like
 regularization method, as well as refinements to it and many other methods.
+The corpcor package, like Ledoit Wolf, includes ways to use sophisticated
+regularization operators (so-called shrinkage targets), and can apply more
+broadly than the simple approach taken in this note.
 
 You can use the corpcor package to form a Ledoit-Wolf-like regularized
-precision matrix P, and you should try it! The result is similar to what we get
-from our simple truncated eigenvalue decomposition regularization.
+precision matrix P, and you should try it! The result is pretty similar to what
+we get from our simple truncated eigenvalue decomposition regularization in
+this example.
 
 
 # Networks and clustering
@@ -336,9 +354,11 @@ including methods for clustering and community detection.
 
 R's comprehensive igraph package by G&aacute;bor Cs&aacute;rdi
 (https://cran.r-project.org/package=igraph) includes many network cluster
-detection algorithms. The example below uses igraph's `cluster_louvain()`
-function to classify our stocks into groups using a thresholded precision
-matrix, producing an igraph object `g`.
+detection algorithms. The example below uses Blondel and co-authors' fast
+community detection algorithm implemented by igraph's `cluster_louvain()`
+function to segment the thresholded precision matrix of stocks into groups.
+The code produces an igraph graph object `g`, with vertices colored by group
+membership.
 
 ```{r}
 suppressMessages(library(igraph))
