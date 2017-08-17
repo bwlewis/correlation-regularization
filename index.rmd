@@ -261,11 +261,11 @@ of the information in the correlation matrix is contained in the first
 few eigenvectors.
 
 Let's assume, perhaps unreasonably, that the errors in our estimate of the
-sample correlation matrix are equally likely to occur in any direction from any
-projection of our data (that the errors are white noise, basically).  As we can
-see above, most of the information is concentrated in projections corresponding
-to the first few eigenvectors.  But white  noise will have information content
-in all the projected dimensions more or less equally.
+sample correlation matrix are equally likely to occur in any direction (that
+the errors are white noise, basically).  As we can see above, most of the
+information is concentrated in the subspace corresponding to the first few
+eigenvectors. But white  noise will have information content in all the
+dimensions more or less equally.
 
 One regularization technique replaces the correlation matrix with an
 approximation defined by only the first few eigenvectors. Because they
@@ -273,8 +273,8 @@ represent a large amount of the information content, the approximation can be
 pretty good. More importantly, because we assumed noise to be more or less
 equally represented across the eigenvector directions and we're cutting most of
 those off, this approximation tends to damp the noise more than the underlying
-correlation information. Most importantly, we're cutting off the projected
-subspace associated tiny eigenvalues, avoiding the problem of division by tiny
+correlation information. Most importantly, we're cutting off the subspace
+associated with tiny eigenvalues, avoiding the problem of division by tiny
 values and significantly reducing amplified noise in the inverse of the
 correlation matrix (the precision matrix).
 
@@ -282,7 +282,7 @@ The upshot is, we regularize the correlation matrix by approximating it by a
 low-rank matrix that substantially reduces the influence of noise on the
 precision matrix.  See Per Christian Hansen's excellent book "Rank-Deficient
 and Discrete Ill-Posed Problems"
-(http://epubs.siam.org/doi/book/10.1137/1.9780898719697) for substantial
+(http://epubs.siam.org/doi/book/10.1137/1.9780898719697) for
 insight into related topics.
 
 ## But how to choose a cut-off rank?
