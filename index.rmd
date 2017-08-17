@@ -1,6 +1,6 @@
 ---
 title: "Learning things we already know about stocks"
-subtitle: "or, stock return series networks and sample correlation matrix shrinkage"
+subtitle: "or, stock return series networks and sample correlation matrix regularization"
 author: "B. W. Lewis"
 date: "8/10/2017"
 output:
