@@ -259,8 +259,11 @@ approximation defined by only the first few eigenvectors. Because they
 represent a large amount of the information content, the approximation can be
 pretty good. More importantly, because we assumed noise to be more or less
 equally represented across the eigenvector directions and we're cutting most of
-those off, this approximation tends to damp the noise much more than the
-underlying correlation information.
+those off, this approximation tends to damp the noise more than the underlying
+correlation information. Most importantly, we're cutting off the projected
+subspace associated tiny eigenvalues, avoiding the problem of division by tiny
+values and significantly reducing amplified noise in the inverse of the
+correlation matrix (the precision matrix).
 
 The upshot is, we regularize the correlation matrix by approximating it by a
 low-rank matrix that substantially reduces the influence of noise on the
