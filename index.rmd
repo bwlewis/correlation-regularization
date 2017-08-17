@@ -1,5 +1,5 @@
 ---
-title: "Stuff we (mostly) already know about stocks"
+title: "Things we (mostly) already know about stocks"
 subtitle: "or, stock return series networks and sample correlation matrix shrinkage"
 author: "B. W. Lewis"
 date: "8/10/2017"
@@ -9,10 +9,9 @@ output:
 ---
 
 This example groups stocks together in a network that highlights associations
-within and between the groups using only historical price data for the stocks.
-The result is far from ground-breaking: you already can mostly guess the
-output.  Stocks from pharmaceutical companies are grouped together for
-instance, as are banks, etc., into pretty obvious stock sector classes.
+within and between the groups using only historical price data.  The result is
+far from ground-breaking: you already can mostly guess the output. Stocks get
+grouped together into pretty obvious business sectors.
 
 Despite the obvious result, the process of teasing out latent groupings from
 stock historic price data is interesting. That's the focus of this example.  A
