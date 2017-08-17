@@ -14,12 +14,12 @@ far from ground-breaking: you already can mostly guess the output. Stocks get
 grouped together into pretty obvious business sectors.
 
 Despite the obvious result, the process of teasing out latent groupings from
-stock historic price data is interesting. That's the focus of this example.  A
+historic price data is interesting. That's the focus of this example.  A
 central idea of the approach taken here comes from the great paper of Ledoit
 and Wolf, "Honey, I Shrunk the Sample Covariance Matrix"
 (http://www.ledoit.net/honey.pdf). This example employs a variation of their
-regularization approach based on a matrix eigenvalue decomposition, but
-it's the same general idea.
+regularization approach based on a matrix eigenvalue decomposition, but it's
+the same general idea.
 
 Rather than focus on mathematical analysis, which is well-described in detail
 in the references, this example spells out the how's and why's: how to do it
@@ -30,7 +30,7 @@ For emphasis, allow me to restate the first sentence as an imperative
 objective:
 
 - Group stocks together in a network that highlights associations within
-  and between the groups using only historical price data for the stocks.
+  and between the groups using only historical price data.
 
 That's what the rest of this example will do.
 
@@ -76,8 +76,8 @@ by returning `NA`, later removed from the result. The upshot is that the output
 number of columns of stock price time series may be smaller than the input list
 of stock symbols.
 
-The output of the following code is an xts time series  matrix `prices` of
-stock prices whose rows correspond to days and columns to stock symbols.
+The output of the following code is an xts time series  matrix of stock prices
+called `prices` whose rows correspond to days and columns to stock symbols.
 
 ```{r, eval=FALSE}
 library(quantmod)
@@ -109,14 +109,14 @@ colnames(prices) = sym[i]
 # Post process price data
 
 Not every stock symbol may have prices available for every day. (Trading may be
-suspended for some reason, the symbol may be new or old and drop off at either
-end, etc.)
+suspended for some reason, companies get acquired or go private, new companies
+form, etc.)
 
 Let's fill in missing values going forward in time using the last known
 reported price (piecewise constant interpolation)--a reasonable approach for
 stock price time series, at least for short gaps. After that, if there are
-still missing values, we remove the symbols that contain them, possibly further
-reducing the universe of stock symbols we're working with.
+still missing values, just remove those symbols that contain them, possibly
+further reducing the universe of stock symbols we're working with.
 
 ```{r, eval=FALSE}
 for(j in 1:ncol(prices)) prices[, j] = na.locf(prices[, j])       # fill in
@@ -126,16 +126,16 @@ prices = prices[, apply(prices, 2, function(x) ! any(is.na(x)))]  # omit stocks 
 
 # Convert from prices to log(returns)
 
-Now that we have a universe of stocks with valid price data, let's convert
-those prices to log(returns) for our future analysis.
+Now that we have a universe of stocks with valid price data, convert
+those prices to log(returns) for the remaining analysis.
 
-### Why log(returns) instead of prices?
+Why log(returns) instead of prices?
 
 The log(returns) are closer to normally distributed than prices especially in
 the long run. See, for instance, a note on this by Pat Burns:
 http://www.portfolioprobe.com/2012/01/23/the-distribution-of-financial-returns-made-simple/.
 
-### But why care about getting data closer to normally distributed?
+But why care about getting data closer to normally distributed?
 
 That turns out to be important to us because later we'll use a technique called
 partial correlation. That technique generally works better for normally
@@ -192,20 +192,24 @@ matrix.
 You may recall from some long ago class that, numerically speaking, inverting
 matrices is generally a bad idea. Even worse, we have issue 1 above that says
 that our estimated correlation coefficients contain error (noise). Even a tiny
-amount noise can be hugely amplified if we invert the matrix directly. That's
-because the correlation matrix contains tiny eigenvalues as we will see below,
-and matrix inversion will effectively divide the noise by those tiny values.
-Simply stated, dividing by a tiny number returns a big number--that is,
-matrix inversion blows the noise up.
+amount noise can be hugely amplified if we invert the correlation matrix.
+That's because, as we will soon see, the correlation matrix contains tiny
+eigenvalues and matrix inversion will effectively divide the noise by those
+tiny values.  Simply stated, dividing by a tiny number returns a big
+number--that is, matrix inversion tends to blow the noise up.
 
-Ledoit and Wolf's sensible answer to reducing the influence of noise on our
-estimates is _regularization_. Regularization replaces models based on our data
-with different, related models that reduce the influence of noise on their
-output. LW use a form of regularization somewhat related to ridge regression
-(a. k. a. Tikhonov regularization) with a peculiar regularization operator
-based on a highly structured estimate of the covariance. We will use a similar
-but simpler kind of regularization based on an eigenvalue decomposition of the
-correlation matrix `X`.
+Think of the overall goal of this example as a model: given the input of a
+bunch of historical stock prices, produce the output of a network that
+highlights associations within and between the groups of stocks.
+
+Ledoit and Wolf's sensible answer to reducing the influence of noise is
+_regularization_. Regularization replaces models with _different_, but related,
+models designed to reduce the influence of noise on their output.  LW use a
+form of regularization  related to ridge regression (a.  k. a.  Tikhonov
+regularization) with a peculiar regularization operator based on a highly
+structured estimate of the covariance. We will use a similar but simpler kind
+of regularization based on an eigenvalue decomposition of the correlation
+matrix `X`.
 
 
 # Regularization
@@ -220,41 +224,43 @@ matrix is technically symmetric positive semi-definite, and will have only
 nonnegative real eigenvalues.)
 
 Each eigenvector represents an orthogonal projection of the correlation matrix
-into a line (a 1-d shadow of the data). The subspace spanned by the first two
-eigenvectors defines a projection of the correlation matrix into a plane (2-d),
-etc.. The eigenvalues estimate the proportion of information (or variability if
-you prefer) from our original correlation matrix contained in each eigenvector.
-Because the eigenvectors are orthogonal, this proxy measurement of information
-is additive.
+into a line (a 1-d shadow of the data); The first two eigenvectors define a
+projection of the correlation matrix into a plane (2-d), and so on. The
+eigenvalues estimate the proportion of information (or variability if you
+prefer) from the original correlation matrix contained in each eigenvector.
+Because the eigenvectors are orthogonal, these measurements of projected
+information are additive.
 
-Here is a plot of all the eigenvalues (along with a vertical line that will
-be explained in a moment):
+Here is a plot of all the sample correlation matrix eigenvalues (along with a
+vertical line that will be explained in a moment):
 ```{r, echo=FALSE}
 load("logreturns.rdata")
 X = cor(log_returns)
 L = eigen(X, symmetric=TRUE)
-par(oma=c(0,0,0,0), mar=c(0,0,0,0))
 ```
 ```{r}
 plot(L$values, ylab="eigenvalues")
 abline(v=10)
 ```
 
-They fall off rather quickly in our example!
+The eigenvalues fall off rather quickly in our example! That means that a lot
+of the total information in the correlation matrix is contained in the first
+few eigenvectors.
 
 Let's assume, perhaps unreasonably, that the errors in our estimate of the
-sample correlation matrix equally likely to occur in any direction in any
+sample correlation matrix are equally likely to occur in any direction from any
 projection of our data (that the errors are white noise, basically).  As we can
-see above, most of the information in the correlation matrix is concentrated in
-projections corresponding to the first few eigenvectors.  But the noise will
-have information content in all the projected dimensions more or less equally.
+see above, most of the information is concentrated in projections corresponding
+to the first few eigenvectors.  But white  noise will have information content
+in all the projected dimensions more or less equally.
 
 One regularization technique replaces the correlation matrix with an
 approximation defined by only the first few eigenvectors. Because they
 represent a large amount of the information content, the approximation can be
 pretty good. More importantly, because we assumed noise to be more or less
-equally represented across the eigenvector directions, this approximation tends
-to damp the noise more than the underlying correlation information.
+equally represented across the eigenvector directions and we're cutting most of
+those off, this approximation tends to damp the noise much more than the
+underlying correlation information.
 
 The upshot is, we regularize the correlation matrix by approximating it by a
 low-rank matrix that substantially reduces the influence of noise on the
@@ -263,7 +269,7 @@ and Discrete Ill-Posed Problems"
 (http://epubs.siam.org/doi/book/10.1137/1.9780898719697) for substantial
 insight into related topics.
 
-## But how to choose a rank?
+## But how to choose a cut-off rank?
 
 There is a substantial mathematical literature for
 just this topic (regularization parameter choice selection), complete with deep
@@ -278,21 +284,20 @@ between k-means clustering and projections like truncated eigenvalue
 expansions.  Although we aren't interested in k-means clustering per se, our
 objective _is_ connected to clustering generally. Ding and He show that we can
 find at least k (k-means) clusters using the first k - 1 eigenvectors above.
-This gives us another heuristic way to choose a projection dimension, if we
-have an idea about the number of clusters to look for.
-
-See https://bwlewis.github.io/crosstool/pca.html for an unfinished example that
-is related to this one that focuses on clustering and k-means of genomic data.
+This gives us another heuristic way to choose a projection dimension, at least
+if we have an idea about the number of clusters to look for.  See
+https://bwlewis.github.io/crosstool/pca.html for an unfinished example that is
+related to this one that focuses on clustering and k-means of genomic data.
 
 
 
 ## A precision matrix, finally
 
-Finally, we form the precision matrix `P` from this regularized correlation
+Finally, we form the precision matrix `P` from the regularized correlation
 matrix.  The inversion is less numerically-problematic now because of
-regularization!  Experiment with the projected rank `N` below.
+regularization.  Feel free to experiment with the projected rank `N` below!
 ```{r}
-N = 10  # (use 1st 10 eigenvectors, set N=nrow(X) for no regularization)
+N = 10  # (use 1st 10 eigenvectors, set N larger to reduce regularization)
 P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
 ```
 
@@ -307,8 +312,8 @@ Wolf-like regularization method, as well as refinements to it and many other
 methods.
 
 You can use the corpcor package to form a Ledoit-Wolf-like regularized
-precision matrix P. The result is similar to what we get from our simple
-truncated eigenvalue decomposition regularization.
+precision matrix P, and you should try it! The result is similar to what we get
+from our simple truncated eigenvalue decomposition regularization.
 
 
 # Networks and clustering
@@ -323,9 +328,9 @@ of stock associations.  Thresholding entries of the precision matrix to
 include, say, only the top ten per cent results in a network of only the most
 strongly associated stocks.
 
-Thinking in terms of networks opens up access to a huge and useful toolbox:
-graph theory. We gain access to all kinds of nifty ways to analyze and
-visualize data, including methods for clustering and community detection.
+Thinking in terms of networks opens up a huge and useful toolbox: graph theory.
+We gain access to all kinds of nifty ways to analyze and visualize data,
+including methods for clustering and community detection.
 
 R's comprehensive igraph package by G&aacute;bor Cs&aacute;rdi
 (https://cran.r-project.org/package=igraph) includes many network cluster
@@ -353,7 +358,6 @@ names(x)[j] = seq(1, s)
 names(x)[! j] = s + 1
 grp = as.integer(rep(names(x), i))
 clrs = c(rainbow(s), "gray")[grp[order(unlist(x))]]
-groups = lapply(x, function(i) colnames(X)[i])
 g = set_vertex_attr(g, "color", value=clrs)
 ```
 
@@ -363,18 +367,18 @@ visualization of the network (you can use your mouse/trackpad to rotate, zoom
 and pan the visualization).
 ```{r, fig.width=8.5, fig.height=7}
 library(threejs)
-graphjs(g, vertex.size=0.2, vertex.shape=rownames(X), bg="black", edge.alpha=0.5)
+graphjs(g, vertex.size=0.2, vertex.shape=rownames(X), bg="white", edge.alpha=0.5)
 ```
 
 Look closely and you will see clusters made up of bank-like companies (AIG,
 BAC, BK, C, COF, GS, JPM, MET, MS, USB, WFC), pharmaceutical companies (ABT,
 AMGN, BIIB, BMY, CELG, GILD, JNJ, LLY, MRK, PFE), computer/technology-driven
-companies (AAPL, ACN, CSCO, IBM, INTC, MSFT, ORCL, QCOM, T, TXN, VZ; except
-oddly the inclusion of CAT in this list), and so on. With the threshold value
-of 0.9 above, a few stocks aren't connected to any others -- they appear in
-gray.
+companies (AAPL, ACN, CSCO, IBM, INTC, MSFT, ORCL, QCOM, T, TXN, VZ--except
+oddly the inclusion of CAT in this list), and so on.
+With the threshold value of 0.9 above, a few stocks aren't connected to any
+others -- they appear in gray.
 
-These groups more or less correspond to what we already know!
+The groups more or less correspond to what we already know!
 
 The group that includes FB, GOOG, and AMZN (Facebook, Alphabet/Google, and
 Amazon) is interesting and a bit mysterious. It includes credit card companies
@@ -394,5 +398,5 @@ the credit card company group.
 We downloaded daily adjusted closing stock prices for 100 stocks from the S&P
 500, and, using basic tools of statistics and analysis like correlation and
 regularization, we grouped the stocks together in a network that highlights
-associations within and between the groups. The structure that we teased out of
-these raw data is reasonably intuitive.
+associations within and between the groups. The structure teased out of the
+stock price data is reasonably intuitive.
