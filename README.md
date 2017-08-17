@@ -1,10 +1,10 @@
-### Time series clustering and covariance matrix shrinkage
+# Stuff we (mostly) already know about stocks
+
+## or, stock return series networks and sample correlation matrix shrinkage
 
 See
 
 http://bwlewis.github.io/covariance-shrinkage
 
-for a fun example of graph-based time series covariance shrinkage and graph
-clustering using stock market data.
-
-The code that generated the example are stored in this repository.
+for an example regularization, network analysis, and clustering using stock
+market data.
