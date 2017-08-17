@@ -327,8 +327,8 @@ Opgen-Rhein, Verena Zuber, Miika Ahdesmaki, A. Pedro Duarte Silva, and
 Korbinian Strimmer. Their package includes the original Ledoit Wolf-like
 regularization method, as well as refinements to it and many other methods.
 The corpcor package, like Ledoit Wolf, includes ways to use sophisticated
-regularization operators (so-called shrinkage targets), and can apply more
-broadly than the simple approach taken in this note.
+regularization operators and can apply more broadly than the simple approach
+taken in this note.
 
 You can use the corpcor package to form a Ledoit-Wolf-like regularized
 precision matrix P, and you should try it! The result is pretty similar to what
