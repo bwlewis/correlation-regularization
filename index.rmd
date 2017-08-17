@@ -473,7 +473,7 @@ slider = crosstool(sd1, "transmitter",
                 sprintf("<input type='range' min='0' max='%d' value='0'/>",
                 length(threshold) - 1), width="100%", height=20, channel="filter")
 vis = graphjs(g, l, vertex.size=0.2, main=as.list(threshold), defer=TRUE, edge.alpha=0.5, deferfps=30,
-        crosstalk=sd2, width="100%", height=900, brush=TRUE)
+        crosstalk=sd2, width="100%", height=900)
 
 browsable(div(list(HTML("<center>"), tags$h3("Connectivity threshold (adjust slider to change)"), slider, vis, relay)))
 ```
