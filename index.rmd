@@ -139,7 +139,7 @@ But why care about getting data closer to normally distributed?
 
 That turns out to be important to us because later we'll use a technique called
 partial correlation. That technique generally works better for normally
-distributed data than otherwise, see for example a very good technical
+distributed data than otherwise, see for example a nice technical
 discussion about this by Baba, Shibata, and Sibuya here:
 https://doi.org/10.1111%2Fj.1467-842X.2004.00360.x
 
@@ -303,13 +303,12 @@ P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
 
 # Put a package on it
 
-It's important to note that there is a carefully written R package to construct
-regularized precision matrices: the corpcor package
-(https://cran.r-project.org/package=corpcor) by Juliane
-Schafer, Rainer Opgen-Rhein, Verena Zuber, Miika Ahdesmaki, A. Pedro Duarte
-Silva, and Korbinian Strimmer. Their package includes the original Ledoit
-Wolf-like regularization method, as well as refinements to it and many other
-methods.
+There is a carefully written R package to construct regularized precision
+matrices: the corpcor package (https://cran.r-project.org/package=corpcor) by
+Juliane Schafer, Rainer Opgen-Rhein, Verena Zuber, Miika Ahdesmaki, A. Pedro
+Duarte Silva, and Korbinian Strimmer. Their package includes the original
+Ledoit Wolf-like regularization method, as well as refinements to it and many
+other methods.
 
 You can use the corpcor package to form a Ledoit-Wolf-like regularized
 precision matrix P, and you should try it! The result is similar to what we get
@@ -342,8 +341,8 @@ matrix, producing an igraph object `g`.
 suppressMessages(library(igraph))
 
 threshold = 0.90
-Q   = P * (P > quantile(P, probs=threshold))                           # thresholded precision matrix
-g   = graph.adjacency(Q, mode="undirected", weighted=TRUE, diag=FALSE) # ...expressed as a graph
+Q = P * (P > quantile(P, probs=threshold))                           # thresholded precision matrix
+g = graph.adjacency(Q, mode="undirected", weighted=TRUE, diag=FALSE) # ...expressed as a graph
 
 # The rest of the code lumps any singletons lacking edges into a single 'unassociated' group shown in gray
 # (also assigning distinct colors to the other groups).
@@ -367,7 +366,7 @@ visualization of the network (you can use your mouse/trackpad to rotate, zoom
 and pan the visualization).
 ```{r, fig.width=8.5, fig.height=7}
 library(threejs)
-graphjs(g, vertex.size=0.2, vertex.shape=rownames(X), bg="white", edge.alpha=0.5)
+graphjs(g, vertex.size=0.2, vertex.shape=colnames(X), edge.alpha=0.5)
 ```
 
 Look closely and you will see clusters made up of bank-like companies (AIG,
