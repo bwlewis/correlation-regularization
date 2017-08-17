@@ -402,3 +402,78 @@ We downloaded daily adjusted closing stock prices for 100 stocks from the S&P
 regularization, we grouped the stocks together in a network that highlights
 associations within and between the groups. The structure teased out of the
 stock price data is reasonably intuitive.
+
+
+<hr/>
+
+# Appendix: threejs tricks
+
+The following self-contained example shows how the network changes with
+threshold value. It performs the same steps as we did above, but uses
+some tricks in threejs and an experimental extension to the crosstalk
+package and a few additional R packages 
+to present an interactive animation. Enjoy!
+
+```{r}
+suppressMessages({
+library(quantmod)
+library(igraph)
+library(threejs)
+library(crosstalk)
+library(htmltools)
+# using an experimental extension to crosstalk:
+library(crosstool) # devtools::install_github('bwlewis/crosstool')
+})
+
+# Download the processed log(returns) data:
+suppressMessages(load(url("http://illposed.net/logreturns.rdata")))
+
+X = cor(log_returns)
+L = eigen(X, symmetric=TRUE)
+N = 10  # (use 1st 10 eigenvectors, set N larger to reduce regularization)
+P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
+colnames(P) = colnames(X)
+
+# A function that creates a network for a given threshold and precision matrix
+f = function(threshold, P)
+{
+  Q = P * (P > quantile(P, probs=threshold))                           # thresholded precision matrix
+  g = graph.adjacency(Q, mode="undirected", weighted=TRUE, diag=FALSE) # ...expressed as a graph
+
+  x = groups(cluster_louvain(g))
+  i = unlist(lapply(x, length))
+  d = order(i, decreasing=TRUE)
+  x = x[d]
+  i = i[d]
+  j = i > 1
+  s = sum(j)
+  names(x)[j] = seq(1, s)
+  names(x)[! j] = s + 1
+  grp = as.integer(rep(names(x), i))
+  clrs = c(rainbow(s), "gray")[grp[order(unlist(x))]]
+  g = set_vertex_attr(g, "color", value=clrs)
+  set_vertex_attr(g, "shape", value=colnames(P))
+}
+
+threshold = c(0.99, 0.95, 0.90, 0.85, 0.8)
+g = Map(f, threshold, MoreArgs=list(P=P)) # list of graphs, one for each threshold
+
+# Compute force-directed network layouts for each threshold value
+# A bit expensive to compute, so run in parallel!
+library(parallel)
+l = mcMap(function(x) layout_with_fr(x, dim=3, niter=150), g, mc.cores=detectCores())
+
+# Crosstalk shared data sources
+sd1 = SharedData$new(data.frame(key=paste(seq(0, length(threshold) - 1))), key=~key)
+sd2 = SharedData$new(data.frame(1:length(threshold)))
+# Relay the slider values directly to the graph
+relay = crosstool(sd1, "transceiver", relay=sd2, height=0, channel="filter")
+
+slider = crosstool(sd1, "transmitter",
+                sprintf("<input type='range' min='0' max='%d' value='0'/>",
+                length(threshold) - 1), width="100%", height=20, channel="filter")
+vis = graphjs(g, l, vertex.size=0.2, main=as.list(threshold), defer=TRUE, edge.alpha=0.5, deferfps=30,
+        crosstalk=sd2, width="100%", height=900, brush=TRUE)
+
+browsable(div(list(HTML("<center>"), tags$h3("Connectivity threshold (adjust slider to change)"), slider, vis, relay)))
+```
