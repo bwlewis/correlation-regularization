@@ -172,14 +172,14 @@ practical interpretation of the sample correlation values:
    of confounding variables related to both series
    (http://www.tylervigen.com/spurious-correlations).
 
-A great approach to dealing with the second problem is to consider
-cointegration between series instead of correlation, see for example notes by
-Eric Zivot
+A Nobel-prize winning approach to dealing with the second problem is to
+consider cointegration between series instead of correlation, see for example
+notes by Eric Zivot
 (https://faculty.washington.edu/ezivot/econ584/notes/cointegrationslides.pdf),
 or Bernhard Pfaff's lovely book "Analysis of Integrated and Cointegrated Time
 Series with R" (http://www.springer.com/us/book/9780387759661), or even
-Wikipedia (https://en.wikipedia.org/wiki/Cointegration).  I also have some
-of my own weird technical notes on the numerics of cointegration
+Wikipedia (https://en.wikipedia.org/wiki/Cointegration).  I also have some of
+my own weird technical notes on the numerics of cointegration
 (http://illposed.net/cointegration.html).  Cointegration is a wonderful, but
 deep topic. Instead, let's try a lesser but simpler approach.
 
