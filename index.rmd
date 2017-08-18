@@ -67,9 +67,9 @@ The quantmod package (Ulrich and Ryan, http://www.quantmod.com/) makes it
 ridiculously easy to download (and visualize) financial time series data.  The
 following code uses quantmod to download daily stock price data for some
 companies with the largest market capitalizations listed on the Standard &
-Poor's 500 index at the time of this writing. The code downloads daily prices
-from 2012 until the present. Modify this code to experiment with different time
-periods or stocks as desired!
+Poor's 500 index at the time of this writing. The code downloads daily adjusted
+closing prices from 2012 until the present. Modify this code to experiment with
+different time periods or stocks as desired!
 
 Because stock symbol names may change and companies my come and go, it's
 possible that some of the data for some time periods are not available.  The
@@ -133,7 +133,7 @@ simply the ratio of prices relative to the first price).
 Why log(returns) instead of prices?
 
 The log(returns) are closer to normally distributed than prices especially in
-the long run. See, for instance, a note on this by Pat Burns:
+the long run. Pat Burns wrote a note about this (with a Tom Waits soundrack):
 http://www.portfolioprobe.com/2012/01/23/the-distribution-of-financial-returns-made-simple/.
 
 But why care about getting data closer to normally distributed?
@@ -168,8 +168,9 @@ practical interpretation of the sample correlation values:
 1. As Ledoit and Wolf point out, it's well-known that empirical correlation
    estimates may contain lots of error.
 2. Correlation estimates between two stock log(return) series can be
-   misleading for many reasons, but in particular when there are confounding
-   variables related to both series.
+   misleading for many reasons, including spurious correlation or existence
+   of confounding variables related to both series
+   (http://www.tylervigen.com/spurious-correlations).
 
 A great approach to dealing with the second problem is to consider
 cointegration between series instead of correlation, see for example notes by
@@ -180,11 +181,12 @@ Series with R" (http://www.springer.com/us/book/9780387759661), or even
 Wikipedia (https://en.wikipedia.org/wiki/Cointegration).  I also have some
 of my own weird technical notes on the numerics of cointegration
 (http://illposed.net/cointegration.html).  Cointegration is a wonderful, but
-deep topic. Instead, let's try a lesser, but simpler approach.
+deep topic. Instead, let's try a lesser but simpler approach.
 
-We can try to address issue 2 above by controlling for confounding variables.
-One approach considers _partial correlation_ instead of correlation (see for
-example https://en.wikipedia.org/wiki/Partial_correlation and
+We can try to address at least part of issue 2 above by controlling for
+confounding variables, at least partially.  One approach considers _partial
+correlation_ instead of correlation (see for example
+https://en.wikipedia.org/wiki/Partial_correlation and
 https://www.statlect.com/glossary/precision-matrix). That approach works best
 in practice with approximately normal data--one reason for the switch to
 log(returns) instead of prices. We will treat the entries of the precision
