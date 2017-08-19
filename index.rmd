@@ -200,7 +200,7 @@ structure in our data. (And indeed related methods as discussed by Ledoit and
 Wolf and elsewhere are widely used in portfolio and risk analyses in practice.)
 
 The partial correlation coefficients between all stock log(returns) series are
-the entries of the inverse of the correlation matrix
+the entries of the inverse of the sample correlation matrix
 (https://www.statlect.com/glossary/precision-matrix).
 
 Market trading of our universe of companies, with myriad known and unknown
@@ -211,8 +211,8 @@ historical stock prices, produce a network of associations.
 You may recall from some long ago class that, numerically speaking, inverting
 matrices is generally a bad idea. Even worse, issue 1 above says that our
 estimated correlation coefficients contain error (noise). Even a tiny amount
-noise can be hugely amplified if we invert the correlation matrix.  That's
-because, as we will soon see, the correlation matrix contains tiny eigenvalues
+noise can be hugely amplified if we invert the matrix.  That's
+because, as we will soon see, the sample correlation matrix contains tiny eigenvalues
 and matrix inversion effectively divides the noise by those tiny values.
 Simply stated, dividing by a tiny number returns a big number--that is, matrix
 inversion tends to blow the noise up. This is a fundamental issue (in a sense,
@@ -224,26 +224,26 @@ models designed to reduce the influence of noise on their output.  LW use a
 form of regularization  related to ridge regression (a.  k. a.  Tikhonov
 regularization) with a peculiar regularization operator based on a highly
 structured estimate of the covariance. We will use a simpler kind of
-regularization based on an eigenvalue decomposition of the correlation matrix
+regularization based on an eigenvalue decomposition of the sample correlation matrix
 `X`.
 
 
 # Regularization
 
-Here is an eigenvalue decomposition of the correlation matrix:
+Here is an eigenvalue decomposition of the sample correlation matrix:
 ```{r, eval=FALSE}
 L = eigen(X, symmetric=TRUE)
 ```
 Note that R's `eigen()` function takes care to return the (real-valued)
-eigenvalues of a symmetric matrix in decreasing order for us. (The correlation
-matrix is technically symmetric positive semi-definite, and will have only
+eigenvalues of a symmetric matrix in decreasing order for us. (Technically, the
+correlation matrix is symmetric positive semi-definite, and will have only
 nonnegative real eigenvalues.)
 
-Each eigenvector represents an orthogonal projection of the correlation matrix
+Each eigenvector represents an orthogonal projection of the sample correlation matrix
 into a line (a 1-d shadow of the data); The first two eigenvectors define a
-projection of the correlation matrix into a plane (2-d), and so on. The
+projection of the sample correlation matrix into a plane (2-d), and so on. The
 eigenvalues estimate the proportion of information (or variability if you
-prefer) from the original correlation matrix contained in each eigenvector.
+prefer) from the original sample correlation matrix contained in each eigenvector.
 Because the eigenvectors are orthogonal, these measurements of projected
 information are additive.
 
@@ -260,7 +260,7 @@ abline(v=10)
 ```
 
 The eigenvalues fall off rather quickly in our example! That means that a lot
-of the information in the correlation matrix is contained in the first
+of the information in the sample correlation matrix is contained in the first
 few eigenvectors.
 
 Let's assume, perhaps unreasonably, that the errors in our estimate of the
@@ -276,12 +276,12 @@ represent a large amount of the information content, the approximation can be
 pretty good. More importantly, because we assumed noise to be more or less
 equally represented across the eigenvector directions and we're cutting most of
 those off, this approximation tends to damp the noise more than the underlying
-correlation information. Most importantly, we're cutting off the subspace
+information. Most importantly, we're cutting off the subspace
 associated with tiny eigenvalues, avoiding the problem of division by tiny
 values and significantly reducing amplified noise in the inverse of the
-correlation matrix (the precision matrix).
+sample correlation matrix (the precision matrix).
 
-The upshot is, we regularize the correlation matrix by approximating it by a
+The upshot is, we regularize the sample correlation matrix by approximating it by a
 low-rank matrix that substantially reduces the influence of noise on the
 precision matrix.  See Per Christian Hansen's classic paperback "Rank-Deficient
 and Discrete Ill-Posed Problems"
@@ -312,7 +312,7 @@ related to this one that focuses on clustering and k-means of genomic data.
 
 ## A precision matrix, finally
 
-Finally, we form the precision matrix `P` from the regularized correlation
+Finally, we form the precision matrix `P` from the regularized sample correlation
 matrix.  The inversion is less numerically-problematic now because of
 regularization.  Feel free to experiment with the projected rank `N` below!
 ```{r}
