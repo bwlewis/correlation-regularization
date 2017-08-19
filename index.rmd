@@ -10,8 +10,8 @@ output:
 
 This example groups stocks together in a network that highlights associations
 within and between the groups using only historical price data.  The result is
-far from ground-breaking: you already can mostly guess the output. Stocks get
-grouped together into pretty obvious business sectors.
+far from ground-breaking: you can already guess the output. For the most part,
+the stocks get grouped together into pretty obvious business sectors.
 
 Despite the obvious result, the process of teasing out latent groupings from
 historic price data is interesting. That's the focus of this example.  A
@@ -27,8 +27,7 @@ out the how's and why's: how to do things step by step (using R) and a somewhat
 non-rigorous rationale for each step that's hopefully at least convincing and
 intuitive.
 
-For emphasis, allow me to restate the first sentence as an imperative
-objective:
+For emphasis, allow me to restate the first sentence as an objective:
 
 - Group stocks together in a network that highlights associations within
   and between the groups using only historical price data.
@@ -61,14 +60,14 @@ Otherwise, follow the next two sections to download the raw stock daily price
 data and process those data into log(returns).
 
 
-## Download adjusted daily closing price data from Google Finance
+## Download daily closing price data from Google Finance
 
 The quantmod package (Ulrich and Ryan, http://www.quantmod.com/) makes it
 ridiculously easy to download (and visualize) financial time series data.  The
-following code uses quantmod to download daily stock price data for some
+following code uses quantmod to download daily stock price data for about 100
 companies with the largest market capitalizations listed on the Standard &
-Poor's 500 index at the time of this writing. The code downloads daily adjusted
-closing prices from 2012 until the present. Modify this code to experiment with
+Poor's 500 index at the time of this writing. The code downloads daily closing
+prices from 2012 until the present. Modify the code to experiment with
 different time periods or stocks as desired!
 
 Because stock symbol names may change and companies my come and go, it's
@@ -110,15 +109,15 @@ colnames(prices) = sym[i]
 
 ## Clean up and transform data
 
-Not every stock symbol may have prices available for every day. (Trading may be
+Not every stock symbol may have prices available for every day. Trading can be
 suspended for some reason, companies get acquired or go private, new companies
-form, etc.)
+form, etc.
 
-Let's fill in missing values going forward in time using the last known
-reported price (piecewise constant interpolation)--a reasonable approach for
-stock price time series, at least for short gaps. After that, if there are
-still missing values, just remove those symbols that contain them, possibly
-further reducing the universe of stock symbols we're working with.
+Let's fill in missing values going forward in time using the last reported
+price (piecewise constant interpolation)--a reasonable approach for stock price
+time series. After that, if there are still missing values, just remove those
+symbols that contain them, possibly further reducing the universe of stock
+symbols we're working with.
 
 ```{r, eval=FALSE}
 for(j in 1:ncol(prices)) prices[, j] = na.locf(prices[, j])       # fill in
@@ -127,8 +126,8 @@ prices = prices[, apply(prices, 2, function(x) ! any(is.na(x)))]  # omit stocks 
 
 
 Now that we have a universe of stocks with valid price data, convert those
-prices to log(returns) for the remaining analysis (where by returns I mean
-simply the ratio of prices relative to the first price).
+prices to log(returns) for the remaining analysis (by returns I mean simply the
+ratio of prices relative to the first price).
 
 Why log(returns) instead of prices?
 
@@ -163,7 +162,7 @@ measurement of the degree of linear dependence between the log(return)
 series for the stocks in columns i and j.
 
 There exist at least two issues that can lead to serious problems with the
-practical interpretation of the sample correlation values:
+interpretation of the sample correlation values:
 
 1. As Ledoit and Wolf point out, it's well-known that empirical correlation
    estimates may contain lots of error.
@@ -172,59 +171,64 @@ practical interpretation of the sample correlation values:
    of confounding variables related to both series
    (http://www.tylervigen.com/spurious-correlations).
 
-A Nobel-prize winning approach to dealing with the second problem is to
-consider cointegration between series instead of correlation, see for example
-notes by Eric Zivot
+A [Nobel-prize
+winning](http://www.nobelprize.org/nobel_prizes/economic-sciences/laureates/2003/)
+approach to dealing with the second problem considers cointegration between
+series instead of correlation, see for example notes by Eric Zivot
 (https://faculty.washington.edu/ezivot/econ584/notes/cointegrationslides.pdf),
 or Bernhard Pfaff's lovely book "Analysis of Integrated and Cointegrated Time
-Series with R" (http://www.springer.com/us/book/9780387759661), or even
-Wikipedia (https://en.wikipedia.org/wiki/Cointegration).  I also have some of
-my own weird technical notes on the numerics of cointegration
-(http://illposed.net/cointegration.html).  Cointegration is a wonderful, but
-deep topic. Instead, let's try a lesser but simpler approach.
+Series with R" (http://www.springer.com/us/book/9780387759661), or Wikipedia
+(https://en.wikipedia.org/wiki/Cointegration).  (I also have some weird
+technical notes on the numerics of cointegration at
+http://illposed.net/cointegration.html.
 
-We can try to address at least part of issue 2 above by controlling for
-confounding variables, at least partially.  One approach considers _partial
-correlation_ instead of correlation (see for example
-https://en.wikipedia.org/wiki/Partial_correlation and
-https://www.statlect.com/glossary/precision-matrix). That approach works best
+Cointegration is a wonderful but fairly technical topic. Instead, let's try a
+simpler approach.
+
+We can try to address issue 2 above by controlling for confounding variables,
+at least partially.  One approach considers _partial correlation_ instead of
+correlation (see for example the quite nicely written description in Wikipedia
+https://en.wikipedia.org/wiki/Partial_correlation).  That approach works best
 in practice with approximately normal data--one reason for the switch to
 log(returns) instead of prices. We will treat the entries of the precision
 matrix as measures of association in a network of stocks below.
 
-It's worth stating that approach basically treats the log(returns) series as a
-bunch of vectors and not so much bona fide time series, and can't handle as
-many pathologies that might occur as well as cointegration can. But as we will
-see, this simple technique is still pretty effective at finding structure in
-our data. (And indeed related methods as discussed by Ledoit and Wolf and
-elsewhere are widely used in portfolio and risk analyses in practice.)
+It's worth stating that our simple approach basically treats the log(returns)
+series as a bunch of vectors and not so much bona fide time series, and can't
+handle as many pathologies that might occur as well as cointegration can. But
+as we will see, this simple technique is still pretty effective at finding
+structure in our data. (And indeed related methods as discussed by Ledoit and
+Wolf and elsewhere are widely used in portfolio and risk analyses in practice.)
 
 The partial correlation coefficients between all stock log(returns) series are
-the entries of the inverse of the correlation matrix.
+the entries of the inverse of the correlation matrix
+(https://www.statlect.com/glossary/precision-matrix).
+
+Market trading of our universe of companies, with myriad known and unknown
+associations between them and the larger economy, produced the stock prices we
+downloaded. We might imagine a model of such a system.  Our objective is a kind
+of inverse problem that happens to involve solving for an actual matrix
+inverse: given a bunch of historical stock prices, produce a network of
+associations.
 
 You may recall from some long ago class that, numerically speaking, inverting
-matrices is generally a bad idea. Even worse, we have issue 1 above that says
-that our estimated correlation coefficients contain error (noise). Even a tiny
-amount noise can be hugely amplified if we invert the correlation matrix.
-That's because, as we will soon see, the correlation matrix contains tiny
-eigenvalues and matrix inversion effectively divides the noise by those tiny
-values.  Simply stated, dividing by a tiny number returns a big number--that
-is, matrix inversion tends to blow the noise up. This is a fundamental issue
-(in a sense, _the_ fundamental issue) common to many inverse problems.
-
-Think of our overall goal as a model: given the input of a bunch of historical
-stock prices, produce the output of a network that highlights associations
-within and between the groups of stocks. Stated like this, our model is a kind
-of inverse problem--one that involves finding a precision matrix.
+matrices is generally a bad idea. Even worse, issue 1 above says that our
+estimated correlation coefficients contain error (noise). Even a tiny amount
+noise can be hugely amplified if we invert the correlation matrix.  That's
+because, as we will soon see, the correlation matrix contains tiny eigenvalues
+and matrix inversion effectively divides the noise by those tiny values.
+Simply stated, dividing by a tiny number returns a big number--that is, matrix
+inversion tends to blow the noise up. This is a fundamental issue (in a sense,
+_the_ fundamental issue) common to many inverse problems.
 
 Ledoit and Wolf's sensible answer to reducing the influence of noise is
 _regularization_. Regularization replaces models with _different, but related_,
 models designed to reduce the influence of noise on their output.  LW use a
 form of regularization  related to ridge regression (a.  k. a.  Tikhonov
 regularization) with a peculiar regularization operator based on a highly
-structured estimate of the covariance. We will use a similar but simpler kind
-of regularization based on an eigenvalue decomposition of the correlation
-matrix `X`.
+structured estimate of the covariance. We will use a simpler kind of
+regularization based on an eigenvalue decomposition of the correlation matrix
+`X`.
 
 
 # Regularization
@@ -282,10 +286,10 @@ correlation matrix (the precision matrix).
 
 The upshot is, we regularize the correlation matrix by approximating it by a
 low-rank matrix that substantially reduces the influence of noise on the
-precision matrix.  See Per Christian Hansen's excellent book "Rank-Deficient
+precision matrix.  See Per Christian Hansen's classic paperback "Rank-Deficient
 and Discrete Ill-Posed Problems"
-(http://epubs.siam.org/doi/book/10.1137/1.9780898719697) for
-insight into related topics.
+(http://epubs.siam.org/doi/book/10.1137/1.9780898719697) for insight into
+related topics.
 
 ## But how to choose a cut-off rank?
 
@@ -385,8 +389,7 @@ clrs = c(rainbow(s), "gray")[grp[order(unlist(x))]]
 g = set_vertex_attr(g, "color", value=clrs)
 ```
 
-The stock groups identified by this method are uncanny, but hardly all that
-surprising.  We can use the latest threejs package to make a nice interactive
+Use the latest threejs package to make a nice interactive
 visualization of the network (you can use your mouse/trackpad to rotate, zoom
 and pan the visualization).
 ```{r, fig.width=8.5, fig.height=7}
@@ -394,13 +397,14 @@ library(threejs)
 graphjs(g, vertex.size=0.2, vertex.shape=colnames(X), edge.alpha=0.5)
 ```
 
-Look closely and you will see clusters made up of bank-like companies (AIG,
-BAC, BK, C, COF, GS, JPM, MET, MS, USB, WFC), pharmaceutical companies (ABT,
-AMGN, BIIB, BMY, CELG, GILD, JNJ, LLY, MRK, PFE), computer/technology-driven
-companies (AAPL, ACN, CSCO, IBM, INTC, MSFT, ORCL, QCOM, T, TXN, VZ--except
-oddly the inclusion of CAT in this list), and so on.
-With the threshold value of 0.9 above, a few stocks aren't connected to any
-others -- they appear in gray.
+The stock groups identified by this method are uncanny, but hardly all that
+surprising really.  Look closely and you will see clusters made up of
+bank-like companies (AIG, BAC, BK, C, COF, GS, JPM, MET, MS, USB, WFC),
+pharmaceutical companies (ABT, AMGN, BIIB, BMY, CELG, GILD, JNJ, LLY, MRK,
+PFE), computer/technology-driven companies (AAPL, ACN, CSCO, IBM, INTC, MSFT,
+ORCL, QCOM, T, TXN, VZ--except oddly the inclusion of CAT in this list), and so
+on.  With the threshold value of 0.9 above, a few stocks aren't connected to
+any others -- they appear in gray.
 
 The groups more or less correspond to what we already know!
 
@@ -414,13 +418,15 @@ EXC, NEE), and I'm not sure what to make of that...
 This way of looking at things also nicely highlights connections between
 groups.  For instance, we see that a group containing consumer products
 companies (PEP, KO, PG, CL, etc.) is connected to both the Pharma group, and
-the credit card company group.
+the credit card company group. And see the appendix below for a visualization
+that explores different precision matrix threshold values, including lower
+values with far greater network connectivity.
 
 
 # Review
 
-We downloaded daily adjusted closing stock prices for 100 stocks from the S&P
-500, and, using basic tools of statistics and analysis like correlation and
+We downloaded daily closing stock prices for 100 stocks from the S&P 500, and,
+using basic tools of statistics and analysis like correlation and
 regularization, we grouped the stocks together in a network that highlights
 associations within and between the groups. The structure teased out of the
 stock price data is reasonably intuitive.
