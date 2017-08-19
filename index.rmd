@@ -206,10 +206,8 @@ the entries of the inverse of the correlation matrix
 
 Market trading of our universe of companies, with myriad known and unknown
 associations between them and the larger economy, produced the stock prices we
-downloaded. We might imagine a model of such a system.  Our objective is a kind
-of inverse problem that happens to involve solving for an actual matrix
-inverse: given a bunch of historical stock prices, produce a network of
-associations.
+downloaded. Our objective is a kind of inverse problem: given a bunch of
+historical stock prices, produce a network of associations.
 
 You may recall from some long ago class that, numerically speaking, inverting
 matrices is generally a bad idea. Even worse, issue 1 above says that our
