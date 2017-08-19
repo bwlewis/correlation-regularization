@@ -320,6 +320,15 @@ N = 10  # (use 1st 10 eigenvectors, set N larger to reduce regularization)
 P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
 ```
 
+## Other approaches
+
+I'm not qualified to write about them, but you should be aware that Bayesian
+approaches to solving problems like this are also effectively (and effective!)
+regularization methods.  I hope to someday better understand the connections
+between classical inverse problem solution methods that I know a little bit
+about, and Bayesian methods that I know substantially less about.
+
+
 # Put a package on it
 
 There is a carefully written R package to construct regularized correlation and
