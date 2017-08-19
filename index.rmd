@@ -299,14 +299,13 @@ above plot.
 
 Alternatively consider the lovely short 2004 paper by Chris Ding and Xiaofeng
 He (http://dl.acm.org/citation.cfm?id=1015408) that illuminates connections
-between k-means clustering and projections like truncated eigenvalue
-expansions.  Although we aren't interested in k-means clustering per se, our
-objective _is_ connected to clustering generally. Ding and He show that we can
-find at least k (k-means) clusters using the first k - 1 eigenvectors above.
-This gives us another heuristic way to choose a projection dimension, at least
-if we have an idea about the number of clusters to look for.  See
-https://bwlewis.github.io/crosstool/pca.html for an unfinished example that is
-related to this one that focuses on clustering and k-means of genomic data.
+(that I happen to find fascinating) between k-means clustering and projections
+like truncated eigenvalue expansions.  Although we aren't interested in k-means
+clustering per se, our objective _is_ connected to clustering. Ding and He show
+that we can find at least k (k-means) clusters using the first k - 1
+eigenvectors above.  This gives us another heuristic way to choose a projection
+dimension, at least if we have an idea about the number of clusters to look
+for.
 
 
 
