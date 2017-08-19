@@ -264,14 +264,14 @@ of the information in the correlation matrix is contained in the first
 few eigenvectors.
 
 Let's assume, perhaps unreasonably, that the errors in our estimate of the
-sample correlation matrix are equally likely to occur in any direction (that
-the errors are white noise, basically).  As we can see above, most of the
+correlation matrix are equally likely to occur in any direction (that the
+errors are white noise, basically).  As we can see above, most of the
 information is concentrated in the subspace corresponding to the first few
 eigenvectors. But white  noise will have information content in all the
 dimensions more or less equally.
 
-One regularization technique replaces the correlation matrix with an
-approximation defined by only the first few eigenvectors. Because they
+One regularization technique replaces the sample correlation matrix with an
+approximation defined by only its first few eigenvectors. Because they
 represent a large amount of the information content, the approximation can be
 pretty good. More importantly, because we assumed noise to be more or less
 equally represented across the eigenvector directions and we're cutting most of
