@@ -17,9 +17,8 @@ Despite the obvious result, the process of teasing out latent groupings from
 historic price data is interesting. That's the focus of this example.  A
 central idea of the approach taken here comes from the great paper of Ledoit
 and Wolf, "Honey, I Shrunk the Sample Covariance Matrix"
-(http://www.ledoit.net/honey.pdf). This example employs a variation of their
-regularization approach based on a matrix eigenvalue decomposition, but it's
-the same general idea.
+(http://www.ledoit.net/honey.pdf). This example employs an alternative approach
+based on a matrix eigenvalue decomposition, but it's the same general idea.
 
 This note follows an informal, how-to format.  Rather than focus on
 mathematical analysis, which is well-detailed in the references, I try to spell
