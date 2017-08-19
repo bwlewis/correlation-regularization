@@ -179,7 +179,7 @@ or Bernhard Pfaff's lovely book "Analysis of Integrated and Cointegrated Time
 Series with R" (http://www.springer.com/us/book/9780387759661), or Wikipedia
 (https://en.wikipedia.org/wiki/Cointegration).  (I also have some weird
 technical notes on the numerics of cointegration at
-http://illposed.net/cointegration.html.
+http://illposed.net/cointegration.html.)
 
 Cointegration is a wonderful but fairly technical topic. Instead, let's try a
 simpler approach.
