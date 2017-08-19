@@ -186,7 +186,7 @@ simpler approach.
 
 We can try to address issue 2 above by controlling for confounding variables,
 at least partially.  One approach considers _partial correlation_ instead of
-correlation (see for example the quite nicely written description in Wikipedia
+correlation (see for example the nice description in Wikipedia
 https://en.wikipedia.org/wiki/Partial_correlation).  That approach works best
 in practice with approximately normal data--one reason for the switch to
 log(returns) instead of prices. We will treat the entries of the precision
