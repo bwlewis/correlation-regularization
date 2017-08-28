@@ -404,13 +404,12 @@ graphjs(g, vertex.size=0.2, vertex.shape=colnames(X), edge.alpha=0.5)
 ```
 
 The stock groups identified by this method are uncanny, but hardly all that
-surprising really.  Look closely and you will see clusters made up of
-bank-like companies (AIG, BAC, BK, C, COF, GS, JPM, MET, MS, USB, WFC),
-pharmaceutical companies (ABT, AMGN, BIIB, BMY, CELG, GILD, JNJ, LLY, MRK,
-PFE), computer/technology-driven companies (AAPL, ACN, CSCO, IBM, INTC, MSFT,
-ORCL, QCOM, T, TXN, VZ--except oddly the inclusion of CAT in this list), and so
-on.  With the threshold value of 0.9 above, a few stocks aren't connected to
-any others -- they appear in gray.
+surprising really.  Look closely and you will see clusters made up of bank-like
+companies (AIG, BAC, BK, C, COF, GS, JPM, MET, MS, USB, WFC), pharmaceutical
+companies (ABT, AMGN, BIIB, BMY, CELG, GILD, JNJ, LLY, MRK, PFE),
+computer/technology-driven companies (AAPL, ACN, CSCO, IBM, INTC, MSFT, ORCL,
+QCOM, T, TXN, VZ, and so on.  With the threshold value of 0.9 above, a few
+stocks aren't connected to any others -- they appear in gray.
 
 The groups more or less correspond to what we already know!
 
