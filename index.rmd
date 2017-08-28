@@ -413,12 +413,10 @@ stocks aren't connected to any others -- they appear in gray.
 
 The groups more or less correspond to what we already know!
 
-The group that includes FB, GOOG, and AMZN (Facebook, Alphabet/Google, and
-Amazon) is interesting and a bit mysterious. It includes credit card companies
-V (Visa), MA (Mastercard) and American Express (AXP).  Perhaps the returns of
-FB, GOOG and AMZN are more closely connected to consumer spending than
-technology!  But this group oddly includes Phillip Morris, Coca Cola,
-Pepsi, _and_  McDonald's, and I'm not sure what to make of that.
+The FB, GOOG, AMZN, PCLN (Facebook, Alphabet/Google, Amazon, Priceline) group
+is interesting--it includes credit card companies V (Visa), MA (Mastercard).
+Perhaps the returns of FB, GOOG and AMZN are more closely connected to consumer
+spending than technology!
 
 This way of looking at things also nicely highlights connections between
 groups. For instance, the pharma group is connected to consumer products group
