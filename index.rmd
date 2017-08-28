@@ -421,11 +421,10 @@ technology!  But this group oddly includes Phillip Morris, Coca Cola,
 Pepsi, _and_  McDonald's, and I'm not sure what to make of that.
 
 This way of looking at things also nicely highlights connections between
-groups.  For instance, we see that a group containing consumer products
-companies (PEP, KO, PG, CL, etc.) is connected to both the Pharma group, and
-the credit card company group. And see the appendix below for a visualization
-that explores different precision matrix threshold values, including lower
-values with far greater network connectivity.
+groups. For instance, the pharma group is connected to consumer products group
+through JNJ and PG (Johnson and Johnson and Proctor and Gamble).  See the
+appendix below for a visualization that explores different precision matrix
+threshold values, including lower values with far greater network connectivity.
 
 
 # Review
