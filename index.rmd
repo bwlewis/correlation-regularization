@@ -8,6 +8,13 @@ output:
     theme: default
 ---
 
+```{r setup, include=FALSE}
+lapply(c('quantmod', 'igraph', 'threejs', 'crosstalk','htmltools'), function(x) {
+  if (!requireNamespace(x)) install.packages(x)
+  devtools::install_github('bwlewis/crosstool')
+})
+```
+
 This example groups stocks together in a network that highlights associations
 within and between the groups using only historical price data.  The result is
 far from ground-breaking: you can already guess the output. For the most part,
