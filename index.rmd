@@ -317,6 +317,7 @@ regularization.  Feel free to experiment with the projected rank `N` below!
 ```{r}
 N = 10  # (use 1st 10 eigenvectors, set N larger to reduce regularization)
 P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
+P = P / tcrossprod(sqrt(diag(P)))
 ```
 
 ## Other approaches
@@ -417,8 +418,8 @@ The group that includes FB, GOOG, and AMZN (Facebook, Alphabet/Google, and
 Amazon) is interesting and a bit mysterious. It includes credit card companies
 V (Visa), MA (Mastercard) and American Express (AXP).  Perhaps the returns of
 FB, GOOG and AMZN are more closely connected to consumer spending than
-technology!  But oddly, this group also includes a few energy companies (DUK,
-EXC, NEE), and I'm not sure what to make of that...
+technology!  But this group oddly includes Phillip Morris, Coca Cola,
+Pepsi, _and_  McDonald's, and I'm not sure what to make of that.
 
 This way of looking at things also nicely highlights connections between
 groups.  For instance, we see that a group containing consumer products
@@ -465,6 +466,7 @@ X = cor(log_returns)
 L = eigen(X, symmetric=TRUE)
 N = 10  # (use 1st 10 eigenvectors, set N larger to reduce regularization)
 P = L$vectors[, 1:N] %*% ((1 / L$values[1:N]) * t(L$vectors[, 1:N]))
+P = P / tcrossprod(sqrt(diag(P)))
 colnames(P) = colnames(X)
 
 # A function that creates a network for a given threshold and precision matrix
@@ -488,7 +490,7 @@ f = function(threshold, P)
   set_vertex_attr(g, "shape", value=colnames(P))
 }
 
-threshold = c(0.99, 0.95, 0.90, 0.85, 0.8)
+threshold = c(0.97, 0.95, 0.90, 0.85, 0.8)
 g = Map(f, threshold, MoreArgs=list(P=P)) # list of graphs, one for each threshold
 
 # Compute force-directed network layouts for each threshold value
