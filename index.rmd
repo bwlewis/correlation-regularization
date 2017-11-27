@@ -196,8 +196,7 @@ at least partially.  One approach considers _partial correlation_ instead of
 correlation (see for example the nice description in Wikipedia
 https://en.wikipedia.org/wiki/Partial_correlation).  That approach works best
 in practice with approximately normal data--one reason for the switch to
-log(returns) instead of prices. We will treat the entries of the precision
-matrix as measures of association in a network of stocks below.
+log(returns) instead of prices.
 
 It's worth stating that our simple approach basically treats the log(returns)
 series as a bunch of vectors and not so much bona fide time series, and can't
@@ -207,8 +206,10 @@ structure in our data. (And indeed related methods as discussed by Ledoit and
 Wolf and elsewhere are widely used in portfolio and risk analyses in practice.)
 
 The partial correlation coefficients between all stock log(returns) series are
-the entries of the inverse of the sample correlation matrix
-(https://www.statlect.com/glossary/precision-matrix).
+the entries of the inverse of the sample correlation matrix (also called the
+precision matrix, https://www.statlect.com/glossary/precision-matrix).  We will
+treat the entries of the precision matrix as measures of association in a
+network of stocks below.
 
 Market trading of our universe of companies, with myriad known and unknown
 associations between them and the larger economy, produced the stock prices we
