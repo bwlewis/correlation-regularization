@@ -103,7 +103,7 @@ sym = c("AAPL", "ABBV", "ABT", "ACN", "AGN", "AIG", "ALL", "AMGN", "AMZN", "AXP"
 prices = Map(function(n)
              {
                print(n)
-               tryCatch(getSymbols(n, src="google", env=NULL, from=from)[, 4], error = function(e) NA)
+               tryCatch(getSymbols(n, env=NULL, from=from)[, 4], error = function(e) NA)
              }, sym)
 N = length(prices)
 # identify symbols returning valid data
